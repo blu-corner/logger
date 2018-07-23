@@ -6,6 +6,7 @@ The format keywords are displayed below. Users can use these to modify the
 order or remove them from a log line.
 
 | Keyword | Description |
+| :---: | :--- |
 | severity | Log level of the message debug/info/warn/err/fatal |
 | time | Event timestamp |
 | name | Name of the module that logged the event |
