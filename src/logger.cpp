@@ -19,11 +19,11 @@ struct logWorkItem
     char               mName[64];
     struct tm          mTime;
     struct timeval     mTv;
-    char               mMessage[512];
+    char               mMessage[defaultLogMessageChunkSize];
     size_t             mMessageLen;
 };
 
-static const size_t defaultLogMessageChunkSize = 512;
+
 static const logSeverity::level defaultLoggerSeverity = logSeverity::INFO;
 static const string defaultRootSBFLoogerName = "SBF";
 

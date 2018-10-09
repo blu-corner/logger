@@ -25,6 +25,7 @@ option(JAVA "Enable Java bindings" OFF)
 option(PYTHON "Enable Python bindings" OFF)
 option(CSHARP "Enable C# bindings" OFF)
 option(COVERAGE "Enable gcov coverage" OFF)
+option(EXAMPLES "Include example apps in install" ON)
 
 # set version info
 set(LOGGER_MAJOR_VERSION 0)
@@ -102,9 +103,15 @@ endif(COVERAGE)
 
 # add source
 add_subdirectory(src)
-add_subdirectory(examples)
 
 # deps
+if(NOT SUBMODULE_ROOT_DIR)
+    set(SUBMODULE_ROOT_DIR ${PROJECT_SOURCE_DIR})
+endif()
+if(NOT SUBMODULE_PREFIX_DIR)
+    set(SUBMODULE_PREFIX_DIR ${CMAKE_BINARY_DIR})
+endif()
+
 find_library(EVENT_LIB
   NAMES event
   HINTS "${CMAKE_INSTALL_PREFIX}/lib"
@@ -117,66 +124,61 @@ if (EVENT_LIB AND EVENT_PTHREAD_LIB)
   message(STATUS "event-found: " ${EVENT_LIB})
   message(STATUS "event-pthread-found: " ${EVENT_PTHREAD_LIB})
 else()
-  set(LIBEVENT_CMAKE ${PROJECT_SOURCE_DIR}/ext/libevent CACHE PATH "Location of libevent-cmake" FORCE)
+  set(LIBEVENT_CMAKE ${SUBMODULE_ROOT_DIR}/ext/libevent CACHE PATH "Location of libevent-cmake" FORCE)
   message(STATUS "libevent-location: " ${LIBEVENT_CMAKE})
   ExternalProject_Add(
     LIBEVENT_PROJECT
+    PREFIX ${SUBMODULE_PREFIX_DIR}
     SOURCE_DIR ${LIBEVENT_CMAKE}
     CMAKE_ARGS -DEVENT__DISABLE_TESTS=ON -DEVENT__DISABLE_REGRESS=ON -DEVENT__DISABLE_OPENSSL=ON -DEVENT__DISABLE_SAMPLES=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
     )
 endif()
 
 # sbf
-set(sbf_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/sbf)
-find_package(sbf QUIET)
-if(NOT ${sbf_FOUND})
-  set(SBF_CMAKE ${PROJECT_SOURCE_DIR}/ext/sbf CACHE PATH "Location of sbf-cmake" FORCE)
-  message(STATUS "sbf-location: " ${SBF_CMAKE})
-  ExternalProject_Add(
+set(SBF_CMAKE ${SUBMODULE_ROOT_DIR}/ext/sbf CACHE PATH "Location of sbf-cmake" FORCE)
+message(STATUS "sbf-location: " ${SBF_CMAKE})
+ExternalProject_Add(
     SBF_PROJECT
+    PREFIX ${SUBMODULE_PREFIX_DIR}
     SOURCE_DIR ${SBF_CMAKE}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} ${SUBMODULE_FLAGS}
+    CMAKE_ARGS -DSUBMODULE_PREFIX_DIR=${SUBMODULE_PREFIX_DIR} -DSUBMODULE_ROOT_DIR=${SUBMODULE_ROOT_DIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} ${SUBMODULE_FLAGS}
     )
-  ExternalProject_Get_Property(SBF_PROJECT binary_dir)
-  set(SBF_PROJECT_DIR ${binary_dir}/lib/cmake/sbf CACHE PATH "location of sbf cmake files" FORCE)
-  if (NOT EVENT_LIB)
+ExternalProject_Get_Property(SBF_PROJECT binary_dir)
+set(SBF_PROJECT_DIR ${binary_dir}/lib/cmake/sbf CACHE PATH "location of sbf cmake files" FORCE)
+if (NOT EVENT_LIB)
     add_dependencies(SBF_PROJECT LIBEVENT_PROJECT)
-  endif()
 endif()
+set(CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS} "${binary_dir};sbf;ALL;/")
 
 # utils
-set(utils_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/utils)
-find_package(utils QUIET)
-if(NOT ${utils_FOUND})
-  set(UTILS_CMAKE ${PROJECT_SOURCE_DIR}/ext/utils CACHE PATH "Location of utils-cmake" FORCE)
-  message(STATUS "utils-location: " ${UTILS_CMAKE})
-  ExternalProject_Add(
+set(UTILS_CMAKE ${SUBMODULE_ROOT_DIR}/ext/utils CACHE PATH "Location of utils-cmake" FORCE)
+message(STATUS "utils-location: " ${UTILS_CMAKE})
+ExternalProject_Add(
     UTILS_PROJECT
+    PREFIX ${SUBMODULE_PREFIX_DIR}
     SOURCE_DIR ${UTILS_CMAKE}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} ${SUBMODULE_FLAGS}
+    CMAKE_ARGS -DSUBMODULE_PREFIX_DIR=${SUBMODULE_PREFIX_DIR} -DSUBMODULE_ROOT_DIR=${SUBMODULE_ROOT_DIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} ${SUBMODULE_FLAGS}
     )
-  ExternalProject_Get_Property(UTILS_PROJECT binary_dir)
-  set(UTILS_PROJECT_DIR ${binary_dir}/lib/cmake/utils CACHE PATH "location of utils cmake files" FORCE)
-  add_dependencies(UTILS_PROJECT SBF_PROJECT)
-endif()
+ExternalProject_Get_Property(UTILS_PROJECT binary_dir)
+set(UTILS_PROJECT_DIR ${binary_dir}/lib/cmake/utils CACHE PATH "location of utils cmake files" FORCE)
+add_dependencies(UTILS_PROJECT SBF_PROJECT)
+set(CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS} "${binary_dir};utils;ALL;/")
 
 # properties
-set(properties_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/properties)
-find_package(properties QUIET)
-if(NOT ${properties_FOUND})
-  set(PROPERTIES_CMAKE ${PROJECT_SOURCE_DIR}/ext/properties CACHE PATH "Location of properties-cmake" FORCE)
-  message(STATUS "properties-location: " ${PROPERTIES_CMAKE})
-  ExternalProject_Add(
-      PROPERTIES_PROJECT
-      SOURCE_DIR ${PROPERTIES_CMAKE}
-      CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} ${SUBMODULE_FLAGS}
-  )
-  ExternalProject_Get_Property(PROPERTIES_PROJECT binary_dir)
-  set(PROPERTIES_PROJECT_DIR ${binary_dir}/lib/cmake/properties CACHE PATH "location of properties cmake files" FORCE)
-  if(NOT ${sbf_FOUND})
-      add_dependencies(PROPERTIES_PROJECT SBF_PROJECT UTILS_PROJECT)
-  endif()
+set(PROPERTIES_CMAKE ${SUBMODULE_ROOT_DIR}/ext/properties CACHE PATH "Location of properties-cmake" FORCE)
+message(STATUS "properties-location: " ${PROPERTIES_CMAKE})
+ExternalProject_Add(
+    PROPERTIES_PROJECT
+    PREFIX ${SUBMODULE_PREFIX_DIR}
+    SOURCE_DIR ${PROPERTIES_CMAKE}
+    CMAKE_ARGS -DSUBMODULE_PREFIX_DIR=${SUBMODULE_PREFIX_DIR} -DSUBMODULE_ROOT_DIR=${SUBMODULE_ROOT_DIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} ${SUBMODULE_FLAGS}
+    )
+ExternalProject_Get_Property(PROPERTIES_PROJECT binary_dir)
+set(PROPERTIES_PROJECT_DIR ${binary_dir}/lib/cmake/properties CACHE PATH "location of properties cmake files" FORCE)
+if(NOT ${sbf_FOUND})
+    add_dependencies(PROPERTIES_PROJECT SBF_PROJECT UTILS_PROJECT)
 endif()
+set(CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS} "${binary_dir};properties;ALL;/")
 
 # unit-tests
 option(TESTS "Enable unit-tests" OFF)
@@ -193,19 +195,22 @@ if(TESTS)
   add_subdirectory(test)
 endif()
 
-INCLUDE(CPack)
-SET(CPACK_GENERATOR "TGZ")
-
 # add examples
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples/cpp/ DESTINATION
-        ${CMAKE_INSTALL_PREFIX}/examples/cpp/)
-
-if(JAVA)
-    INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples/java/ DESTINATION
-            ${CMAKE_INSTALL_PREFIX}/examples/java/)
+if(EXAMPLES)
+  add_subdirectory(examples)
 endif()
 
-if(PYTHON)
-    INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples/python/ DESTINATION
-            ${CMAKE_INSTALL_PREFIX}/examples/python/)
+set(CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS} "${CMAKE_BINARY_DIR};logger;ALL;/")
+set(CPACK_GENERATOR "TGZ")
+set(CPACK_PACKAGE_VERSION_MAJOR "${LOGGER_MAJOR_VERSION}")
+set(CPACK_PACKAGE_VERSION_MINOR "${LOGGER_MINOR_VERSION}")
+set(CPACK_PACKAGE_VERSION_PATCH "${LOGGER_PATCH_VERSION}")
+set(CPACK_PACKAGE_NAME "logger")
+set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+if(DEBUG)
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_dbg-${CPACK_PACKAGE_VERSION}")
+else()
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 endif()
+
+INCLUDE(CPack)

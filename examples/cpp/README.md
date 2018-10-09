@@ -11,6 +11,7 @@ Execute with:
 
 ```bash
 $ ./example
+$ ./customHandlerExample
 ```
 
 If the app is being compiled from outside of the install directory change the 

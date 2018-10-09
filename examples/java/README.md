@@ -1,6 +1,6 @@
-# properties Java Example
+# logger Java Example
 
-An example app showing use of the various features within the Properties module 
+An example app showing use of the various features within the Logger module 
 from Java. To build the application:
 
 ```bash
@@ -11,7 +11,7 @@ Where INSTALL_PREFIX points to the absolute path of the installation. To
 execute the jar:
 
 ```bash
-$ java -cp $INSTALL_PREFIX/lib/java/PropertiesJNI.jar:`pwd`/target/example-1.0-SNAPSHOT.jar com.neueda.properties.example.App
+$ java -cp $INSTALL_PREFIX/lib/java/LoggerJNI.jar:$INSTALL_PREFIX/lib/java/PropertiesJNI.jar:`pwd`/target/example-1.0-SNAPSHOT.jar com.neueda.logger.example.App
 ```
 
-View the source [here](src/main/java/com/neueda/properties/example/App.java).
+View the source [here](src/main/java/com/neueda/logger/example/App.java).

@@ -31,4 +31,23 @@
 *.out
 *.app
 
+# cmake
+CMakeFiles
+build
+
+# python
+*.pyc
+*.idea
+
+*.swp
+
+# generated files
+src/FormatScanner.cc
+src/FormatScanner.cpp
+src/FormatScanner.h
+
+# vscode
+.vscode
+.editorconfig
+
 build/*

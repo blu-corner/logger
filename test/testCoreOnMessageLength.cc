@@ -6,6 +6,8 @@
 #include <gtest/gtest.h>
 
 #include "logger.h"
+#include "sharedMemoryRingBuffer.h"
+
 
 using namespace neueda;
 using namespace std;
@@ -41,11 +43,11 @@ protected:
     logger* mLogger;
 };
 
-TEST_F(LoggerHandlerTestHarness, TEST_EXCEED_512_BUFFER_SIZE)
+TEST_F(LoggerHandlerTestHarness, TEST_EXCEED_BUFFER_SIZE)
 {
-    char* testBuffer = new char[1024];
-    memset (testBuffer, 0, 1024);
-    memset (testBuffer, '1', 612);
+    char* testBuffer = new char[defaultLogMessageChunkSize * 2];
+    memset (testBuffer, 0, defaultLogMessageChunkSize * 2);
+    memset (testBuffer, '1', defaultLogMessageChunkSize + (defaultLogMessageChunkSize / 2));
 
     logService& service = logService::get ();
     testLogHandler* handler = new testLogHandler ();

@@ -15,14 +15,15 @@ using namespace std;
 
 namespace neueda
 {
-
+static const size_t defaultLogMessageChunkSize = 2048;
+    
 struct logEntry
 {
     logSeverity::level      severity;
     char                    mName[64];
     struct tm               mTime;
     struct timeval          mTv;
-    char                    mMessage[512];
+    char                    mMessage[defaultLogMessageChunkSize];
 };
 
 struct shmLogEntryHeader
