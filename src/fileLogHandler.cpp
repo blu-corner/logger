@@ -12,8 +12,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <sys/time.h>
+#include "sbfCommon.h"
 
 namespace neueda
 {

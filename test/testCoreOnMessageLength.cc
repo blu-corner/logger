@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 
 #include "logger.h"
-#include "sharedMemoryRingBuffer.h"
 
 
 using namespace neueda;

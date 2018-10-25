@@ -1,19 +1,47 @@
 #
 # Copyright 2014-2018 Neueda Ltd.
 #
+set(LOGGER_SOURCES
+  logger.cpp
+  logHandler.cpp
+  consoleLogHandler.cpp
+  fileLogHandler.cpp
+  FormatScanner.cpp
+)
 set(LOGGER_HEADERS
   logSeverity.h
   logger.h
   logHandler.h
   consoleLogHandler.h
-  syslogLogHandler.h  
   fileLogHandler.h
-  sharedMemoryLogHandler.h
-  loggerDaemonServer.h
   ITransportDelegate.h
-  sharedMemoryRingBuffer.h
-  unixSocketClient.h
   )
+
+set(LOGGER_LIBRARIES
+  event
+  properties
+  sbfcore
+  sbfcommon
+  utils
+)
+
+if(NOT WIN32)
+    set(LOGGER_SOURCES ${LOGGER_SOURCES}
+        sharedMemoryLogHandler.cpp
+        sharedMemoryRingBuffer.cpp
+        unixSocketClient.cpp
+        syslogLogHandler.cpp
+        loggerDaemonServer.cpp
+        )
+    set(LOGGER_HEADERS ${LOGGER_HEADERS}
+        sharedMemoryLogHandler.h
+        sharedMemoryRingBuffer.h
+        unixSocketClient.h
+        syslogLogHandler.h
+        loggerDaemonServer.h
+        )
+    set(LOGGER_LIBRARIES ${LOGGER_LIBRARIES} pthread)
+endif()
 
 install(FILES ${LOGGER_HEADERS}
   DESTINATION include/logger
@@ -30,29 +58,21 @@ add_custom_target(GenerateLexer ALL
   DEPENDS ${CMAKE_SOURCE_DIR}/src/FormatScanner.cpp ${CMAKE_SOURCE_DIR}/src/FormatScanner.h
   )
 
-add_library(logger SHARED
-  logger.cpp
-  loggerDaemonServer.cpp
-  sharedMemoryRingBuffer.cpp
-  logHandler.cpp
-  consoleLogHandler.cpp
-  syslogLogHandler.cpp
-  fileLogHandler.cpp
-  sharedMemoryLogHandler.cpp
-  unixSocketClient.cpp
-  FormatScanner.cpp
-  )
+add_library(logger SHARED ${LOGGER_SOURCES})
 
 add_dependencies(logger GenerateLexer)
-add_executable(logger-daemon daemon.cpp)
-target_link_libraries(logger event pthread properties sbfcore sbfcommon)
+target_link_libraries(logger ${LOGGER_LIBRARIES})
 add_dependencies (logger SBF_PROJECT PROPERTIES_PROJECT)
-target_link_libraries(logger-daemon logger)
 
-install(TARGETS logger-daemon
-  RUNTIME DESTINATION bin)
+if(NOT WIN32)
+    add_executable(logger-daemon daemon.cpp)
+    target_link_libraries(logger-daemon logger)
+    install(TARGETS logger-daemon
+        RUNTIME DESTINATION bin)
+endif()
 install(TARGETS logger
   EXPORT ${PROJECT_NAME}
+  RUNTIME DESTINATION lib
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib)
 
