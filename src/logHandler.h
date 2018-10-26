@@ -8,7 +8,11 @@
 #include "properties.h"
 #include <string>
 #include <set>
-#include <sys/time.h>
+#include <sbfCommon.h>
+
+#ifdef WIN32
+#undef ERROR
+#endif
 
 using namespace std;
 
@@ -71,9 +75,6 @@ public:
                                          string& errorMessage);
 
 private:
-    static bool configureShmHandler (properties& properties,
-                                     set<logHandler*>& handlers,
-                                     string& errorMessage);
 
     static bool configureConsoleHandler (properties& properties,
                                          set<logHandler*>& handlers,
@@ -82,10 +83,15 @@ private:
     static bool configureFileHandler (properties& properties,
                                       set<logHandler*>& handlers,
                                       string& errorMessage);
+#ifndef WIN32
+    static bool configureShmHandler (properties& properties,
+                                     set<logHandler*>& handlers,
+                                     string& errorMessage);
 
     static bool configureSyslogHandler (properties& properties,
                                         set<logHandler*>& handlers,
                                         string& errorMessage);
+#endif
 
     static bool propertyValueToConsoleFd (const string& value,
                                           FILE*& fdValue,

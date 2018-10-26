@@ -2,13 +2,12 @@
  * Copyright 2014-2018 Neueda Ltd.
  */
 
-#include <sharedMemoryLogHandler.h>
 #include <logger.h>
+#include <sbfCommon.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
-#include <sys/time.h>
 
 namespace neueda
 {
@@ -26,6 +25,17 @@ struct logWorkItem
 
 static const logSeverity::level defaultLoggerSeverity = logSeverity::INFO;
 static const string defaultRootSBFLoogerName = "SBF";
+
+logService* logService::mInstance = NULL;
+
+logService&
+logService::get()
+{
+    if (mInstance == NULL)
+        mInstance = new logService();
+
+    return *mInstance;
+}
 
 logService::~logService ()
 {

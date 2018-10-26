@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "logger.h"
 #include "logSeverity.h"
 #include "sbfCommon.h"
 
@@ -15,8 +16,7 @@ using namespace std;
 
 namespace neueda
 {
-static const size_t defaultLogMessageChunkSize = 2048;
-    
+
 struct logEntry
 {
     logSeverity::level      severity;

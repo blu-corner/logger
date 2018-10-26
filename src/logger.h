@@ -6,10 +6,10 @@
 
 #include "logSeverity.h"
 #include "logHandler.h"
-#include "properties.h"
-#include "sbfCommon.h"
-#include "sbfMw.h"
-#include "sbfQueue.h"
+#include <properties.h>
+#include <sbfCommon.h>
+#include <sbfMw.h>
+#include <sbfQueue.h>
 
 #include <cstdarg>
 #include <string>
@@ -25,6 +25,7 @@
 
 namespace neueda
 {
+static const size_t defaultLogMessageChunkSize = 2048;
 
 class logService;
 
@@ -91,11 +92,7 @@ class logService
 public:
     ~logService ();
 
-    static logService& get () 
-    {
-        static logService service;
-        return service;
-    }
+	static logService& get();
 
     static logger* getLogger (const std::string& name);
 
@@ -153,6 +150,8 @@ private:
     std::map<std::string, logger*>  mloggers;
     std::set<logHandler*>           mHandlers;
     std::map<logHandler*, bool>     mHandlerOwnedTable;
+
+    static logService*              mInstance;
 };
 
 };

@@ -10,6 +10,14 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "default install path" FORCE)
 endif()
 
+if(WIN32)
+  set(CMAKE_SHARED_LINKER_FLAGS "/FORCE:UNRESOLVED")
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+  set(BUILD_SHARED_LIBS TRUE)
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD /DNOMINMAX /DYY_NO_UNISTD_H")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd /DNOMINMAX /DYY_NO_UNISTD_H")
+endif()
+
 if(APPLE)
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
   set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
@@ -44,7 +52,7 @@ if (UNIX)
   endmacro()
 endif (UNIX)
 
-add_compile_options(-Wall -c -W -g)
+add_compile_options(-Wall -c -g)
 if (DEBUG)
   message(STATUS "logger DEBUG: ON")
   set(SUBMODULE_FLAGS ${SUBMODULE_FLAGS} -DDEBUG=on)
@@ -88,7 +96,8 @@ include_directories(
   ${CMAKE_INSTALL_PREFIX}/include/sbf
   ${CMAKE_INSTALL_PREFIX}/include/utils
   ${CMAKE_INSTALL_PREFIX}/include/event2
-  ${CMAKE_INSTALL_PREFIX}/include/properties)
+  ${CMAKE_INSTALL_PREFIX}/include/properties
+  ${FLEX_INCLUDE_DIRS})
 link_directories(${CMAKE_INSTALL_PREFIX}/lib)
 
 # coverage
@@ -173,9 +182,7 @@ ExternalProject_Add(
     )
 ExternalProject_Get_Property(PROPERTIES_PROJECT binary_dir)
 set(PROPERTIES_PROJECT_DIR ${binary_dir}/lib/cmake/properties CACHE PATH "location of properties cmake files" FORCE)
-if(NOT ${sbf_FOUND})
-    add_dependencies(PROPERTIES_PROJECT SBF_PROJECT UTILS_PROJECT)
-endif()
+add_dependencies(PROPERTIES_PROJECT SBF_PROJECT UTILS_PROJECT)
 set(CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS} "${binary_dir};properties;ALL;/")
 
 # unit-tests
@@ -184,12 +191,12 @@ if(TESTS)
   ExternalProject_Add(
     googletest
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/ext/googletest
-    CMAKE_ARGS -DBUILD_GMOCK=ON -DBUILD_GTEST=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/googletest -DCMAKE_INSTALL_LIBDIR=${CMAKE_BINARY_DIR}/googletest/lib
+    CMAKE_ARGS -Dgtest_force_shared_crt=ON -DBUILD_GMOCK=ON -DBUILD_GTEST=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/googletest -DCMAKE_INSTALL_LIBDIR=${CMAKE_BINARY_DIR}/googletest/lib
   )
-  
+
   include(CTest)
   enable_testing()
-  
+
   add_subdirectory(test)
 endif()
 

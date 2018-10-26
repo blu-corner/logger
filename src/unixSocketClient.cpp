@@ -73,7 +73,7 @@ unixClient::dispatch ()
     mTimerEvent = evtimer_new (mBase, &timerCallback, this);
     evtimer_add (mTimerEvent, &mTimerValue);
 
-    if (not failedToConnect)
+    if (!failedToConnect)
     {
         mDelegate->onConnect (this);
         event_base_dispatch (mBase);

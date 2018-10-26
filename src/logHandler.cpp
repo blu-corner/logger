@@ -5,8 +5,10 @@
 #include "logHandler.h"
 #include "fileLogHandler.h"
 #include "consoleLogHandler.h"
+#ifndef WIN32
 #include "syslogLogHandler.h"
 #include "sharedMemoryLogHandler.h"
+#endif
 
 #include "FormatScanner.h"
 #include "tokens.h"
@@ -117,10 +119,6 @@ logHandlerFactory::getHandlers (properties& props,
 {
     set<logHandler*> handlers;
 
-    ok = configureShmHandler (props, handlers, errorMessage);
-    if (!ok)
-        return handlers;
-
     ok = configureConsoleHandler (props, handlers, errorMessage);
     if (!ok)
         return handlers;
@@ -129,48 +127,17 @@ logHandlerFactory::getHandlers (properties& props,
     if (!ok)
         return handlers;
 
-    ok = configureSyslogHandler (props, handlers, errorMessage);
+#ifndef WIN32
+    ok = configureShmHandler (props, handlers, errorMessage);
     if (!ok)
         return handlers;
 
+    ok = configureSyslogHandler (props, handlers, errorMessage);
+    if (!ok)
+        return handlers;
+#endif
+
     return handlers;
-}
-
-bool
-logHandlerFactory::configureShmHandler (properties& props,
-                                        set<logHandler*>& handlers,
-                                        string& errorMessage)
-{
-    bool enabled;
-    if (!getHandlerEnabled (props, "shm", false, enabled))
-    {
-        // failed to parse bool from a user configured value
-        errorMessage.assign ("failed parsing property: enabled for shm");
-        return false;
-    }
-
-    if (enabled)
-    {
-        logSeverity::level logLevel;
-        if (!getHandlerLevel (props, "shm", DEFAULT_LOG_LEVEL, logLevel))
-        {
-            errorMessage.assign ("failed to parse value for file.level");
-            return false;
-        }
-
-        string sockPath;
-        if (props.get ("lh.shm.sock", sockPath))
-        {
-            sharedMemoryLogHandler* handler = new sharedMemoryLogHandler (sockPath);
-            handler->setLevel (logLevel);
-            handlers.insert (handler);
-            return true;
-        }
-        errorMessage.assign ("failed configuring shm handler");
-        return false;
-    }
-
-    return true;
 }
 
 bool
@@ -289,6 +256,44 @@ logHandlerFactory::configureFileHandler (properties& props,
     return true;
 }
 
+#ifndef WIN32
+bool
+logHandlerFactory::configureShmHandler (properties& props,
+                                        set<logHandler*>& handlers,
+                                        string& errorMessage)
+{
+    bool enabled;
+    if (!getHandlerEnabled (props, "shm", false, enabled))
+    {
+        // failed to parse bool from a user configured value
+        errorMessage.assign ("failed parsing property: enabled for shm");
+        return false;
+    }
+
+    if (enabled)
+    {
+        logSeverity::level logLevel;
+        if (!getHandlerLevel (props, "shm", DEFAULT_LOG_LEVEL, logLevel))
+        {
+            errorMessage.assign ("failed to parse value for file.level");
+            return false;
+        }
+
+        string sockPath;
+        if (props.get ("lh.shm.sock", sockPath))
+        {
+            sharedMemoryLogHandler* handler = new sharedMemoryLogHandler (sockPath);
+            handler->setLevel (logLevel);
+            handlers.insert (handler);
+            return true;
+        }
+        errorMessage.assign ("failed configuring shm handler");
+        return false;
+    }
+
+    return true;
+}
+
 bool
 logHandlerFactory::configureSyslogHandler (properties& props,
                                            set<logHandler*>& handlers,
@@ -322,6 +327,7 @@ logHandlerFactory::configureSyslogHandler (properties& props,
 
     return true;
 }
+#endif
 
 bool
 logHandlerFactory::propertyValueToConsoleFd (const string& value,
