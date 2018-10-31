@@ -44,7 +44,7 @@
         std::string errorMessage;
         bool ok = self->addHandler (handler, errorMessage, false);
 
-        if (not ok)
+        if (!ok)
         {
             std::ostringstream oss;
             oss << "failed to add handler: "
@@ -59,7 +59,7 @@
         std::string errorMessage;
         bool ok = self->configure (props, errorMessage);
         
-        if (not ok)
+        if (!ok)
         {
             std::ostringstream oss;
             oss << "failed to configure: "
