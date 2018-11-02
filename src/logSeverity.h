@@ -3,6 +3,10 @@
  */
 
 #pragma once
+#ifdef WIN32
+#undef ERROR
+#endif
+
 
 namespace neueda
 {
