@@ -7,7 +7,7 @@
 }
 
 %typemap(csimports) SWIGTYPE %{
-using Neueda.Config;
+using Neueda.Properties;
 %}
 
 SWIG_CSBODY_PROXY(public, public, SWIGTYPE)

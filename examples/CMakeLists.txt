@@ -17,6 +17,11 @@ if(PYTHON)
             ${EXAMPLES_INSTALL_LOCATION}/python/)
 endif()
 
+if(CSHARP)
+    INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/csharp/ DESTINATION
+            ${EXAMPLES_INSTALL_LOCATION}/csharp/)
+endif()
+
 set(EXAMPLE_INSTALL_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/logger-client-config.ini
   ${CMAKE_CURRENT_SOURCE_DIR}/logger-daemon-config.ini)
