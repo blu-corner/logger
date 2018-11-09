@@ -27,6 +27,7 @@ target_link_libraries(unittest
   gtest
   gmock
   )
+add_dependencies(unittest googletest)
 
 add_test(NAME unittest
   COMMAND unittest --gtest_output=xml:../test.xml
