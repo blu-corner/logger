@@ -1,4 +1,4 @@
-logger
+logger [![Build Status](https://travis-ci.com/blu-corner/logger.svg?branch=master)](https://travis-ci.com/blu-corner/logger) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=blu-corner_logger&metric=alert_status)](https://sonarcloud.io/dashboard?id=blu-corner_logger)
 ======
 
 - [Overview](#overview)
