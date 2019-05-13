@@ -133,7 +133,7 @@ if (EVENT_LIB)
   message(STATUS "event-pthread-found: " ${EVENT_PTHREAD_LIB})
   message(STATUS "event-headers-found: " ${EVENT_INCLUDE_DIR})
 else()
-  set(EVENT_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/event2 CACHE PATH "event includes")
+  set(EVENT_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/event2)
   set(LIBEVENT_CMAKE ${SUBMODULE_ROOT_DIR}/ext/libevent CACHE PATH "Location of libevent-cmake" FORCE)
   message(STATUS "libevent-location: " ${LIBEVENT_CMAKE})
   ExternalProject_Add(
