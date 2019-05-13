@@ -99,15 +99,7 @@ find_package(FLEX REQUIRED)
 # allow external projects
 include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 
-# extra include and links
-include_directories(
-  ${PROJECT_SOURCE_DIR}/src
-  ${CMAKE_INSTALL_PREFIX}/include/
-  ${CMAKE_INSTALL_PREFIX}/include/sbf
-  ${CMAKE_INSTALL_PREFIX}/include/utils
-  ${CMAKE_INSTALL_PREFIX}/include/event2
-  ${CMAKE_INSTALL_PREFIX}/include/properties
-  ${FLEX_INCLUDE_DIRS})
+# extra links
 link_directories(${CMAKE_INSTALL_PREFIX}/lib)
 
 # coverage
@@ -117,9 +109,6 @@ if (COVERAGE)
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILE_FLAGS}" )
     set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${COVERAGE_LINK_FLAGS}" )
 endif(COVERAGE)
-
-# add source
-add_subdirectory(src)
 
 # deps
 if(NOT SUBMODULE_ROOT_DIR)
@@ -137,10 +126,14 @@ find_library(EVENT_PTHREAD_LIB
   NAMES event_pthreads
   HINTS "${CMAKE_INSTALL_PREFIX}/lib"
   )
-if (EVENT_LIB AND EVENT_PTHREAD_LIB)
+find_path(EVENT_INCLUDE_DIR event2/event.h
+  PATHS "${CMAKE_INSTALL_PREFIX}/include")
+if (EVENT_LIB)
   message(STATUS "event-found: " ${EVENT_LIB})
   message(STATUS "event-pthread-found: " ${EVENT_PTHREAD_LIB})
+  message(STATUS "event-headers-found: " ${EVENT_INCLUDE_DIR})
 else()
+  set(EVENT_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/event2 CACHE PATH "event includes")
   set(LIBEVENT_CMAKE ${SUBMODULE_ROOT_DIR}/ext/libevent CACHE PATH "Location of libevent-cmake" FORCE)
   message(STATUS "libevent-location: " ${LIBEVENT_CMAKE})
   ExternalProject_Add(
@@ -149,7 +142,16 @@ else()
     SOURCE_DIR ${LIBEVENT_CMAKE}
     CMAKE_ARGS -DEVENT__DISABLE_TESTS=ON -DEVENT__DISABLE_REGRESS=ON -DEVENT__DISABLE_OPENSSL=ON -DEVENT__DISABLE_SAMPLES=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
     )
+  set(EVENT_LIB event)
 endif()
+
+include_directories(
+  ${PROJECT_SOURCE_DIR}/src
+  ${CMAKE_INSTALL_PREFIX}/include/
+  ${CMAKE_INSTALL_PREFIX}/include/sbf
+  ${CMAKE_INSTALL_PREFIX}/include/utils
+  ${EVENT_INCLUDE_DIR}
+  ${CMAKE_INSTALL_PREFIX}/include/properties)
 
 # sbf
 set(SBF_CMAKE ${SUBMODULE_ROOT_DIR}/ext/sbf CACHE PATH "Location of sbf-cmake" FORCE)
@@ -217,6 +219,9 @@ if(TESTS)
 
   add_subdirectory(test)
 endif()
+
+# add source
+add_subdirectory(src)
 
 # add examples
 if(EXAMPLES)
