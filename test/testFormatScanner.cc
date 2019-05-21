@@ -17,26 +17,29 @@ protected:
     {
         gettimeofday (&mTv, NULL);
         time_t t = mTv.tv_sec;
-        gmtime_r (&t, &mTime);
+        gmtime_r (&t, &mTimee);
+
+        mTime = 1000000 * mTv.tv_sec + mTv.tv_usec;
 
         char dateTimeBuffer[64];
         memset (dateTimeBuffer, 0, sizeof dateTimeBuffer);
         size_t nBytes = snprintf (dateTimeBuffer,
                                   sizeof dateTimeBuffer,
                                   "%04u-%02u-%02u %02u:%02u:%02u.%06u",
-                                  mTime.tm_year + 1900,
-                                  mTime.tm_mon + 1,
-                                  mTime.tm_mday,
-                                  mTime.tm_hour,
-                                  mTime.tm_min,
-                                  mTime.tm_sec,
+                                  mTimee.tm_year + 1900,
+                                  mTimee.tm_mon + 1,
+                                  mTimee.tm_mday,
+                                  mTimee.tm_hour,
+                                  mTimee.tm_min,
+                                  mTimee.tm_sec,
                                   (unsigned int)mTv.tv_usec);
         
         timeString = string (dateTimeBuffer, nBytes);
     }
 
-    struct tm mTime;
+    struct tm mTimee;
     struct timeval mTv;
+    uint64_t mTime;
     string timeString;
 };
 
@@ -49,8 +52,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_TIME_TOKEN)
     string log = logHandler::toString (format,
                                        logSeverity::INFO,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 
@@ -65,8 +67,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_SEVERITY_TOKEN_DEBUG)
     string log = logHandler::toString (format,
                                        logSeverity::DEBUG,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 
@@ -81,8 +82,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_SEVERITY_TOKEN_INFO)
     string log = logHandler::toString (format,
                                        logSeverity::INFO,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 
@@ -97,8 +97,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_SEVERITY_TOKEN_WARNING)
     string log = logHandler::toString (format,
                                        logSeverity::WARN,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 
@@ -113,8 +112,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_SEVERITY_TOKEN_ERROR)
     string log = logHandler::toString (format,
                                        logSeverity::ERROR,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 
@@ -129,8 +127,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_SEVERITY_TOKEN_FATAL)
     string log = logHandler::toString (format,
                                        logSeverity::FATAL,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 
@@ -145,8 +142,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_TOKEN_NAME)
     string log = logHandler::toString (format,
                                        logSeverity::FATAL,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 
@@ -161,8 +157,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_TOKEN_MESSAGE)
     string log = logHandler::toString (format,
                                        logSeverity::FATAL,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 
@@ -177,8 +172,7 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_EMPTY_FORMAT)
     string log = logHandler::toString (format,
                                        logSeverity::FATAL,
                                        "TEST",
-                                       &mTime,
-                                       &mTv,
+                                       mTime,
                                        message.c_str(),
                                        message.size ());
 

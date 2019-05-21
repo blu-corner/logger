@@ -18,10 +18,9 @@ public:
 
     MOCK_METHOD0 (teardown, void ());
 
-    MOCK_METHOD6 (handle, void (logSeverity::level severity,
-                                const char* name,
-                                const struct tm* tm_time,
-                                const struct timeval *tv,
+    MOCK_METHOD5 (handle, void (logSeverity::level severity,
+				const char* name,
+				uint64_t time,
                                 const char* message,
                                 size_t message_len));
 };
@@ -62,7 +61,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (3);
 
@@ -90,7 +88,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -125,7 +122,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (0);
 
@@ -153,7 +149,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -187,7 +182,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (0);
 
@@ -215,7 +209,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -249,7 +242,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (3);
 
@@ -277,7 +269,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -311,7 +302,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (0);
 
@@ -339,7 +329,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -373,7 +362,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (3);
 
@@ -401,7 +389,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -435,7 +422,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (3);
 
@@ -463,7 +449,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -497,7 +482,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (0);
 
@@ -525,7 +509,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -559,7 +542,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (3);
 
@@ -587,7 +569,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
@@ -621,7 +602,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
-                                   ::testing::_,
                                    ::testing::_))
         .Times (3);
 
@@ -649,7 +629,6 @@ TEST_F(LogHandlerStreamApiTestHarness,
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,

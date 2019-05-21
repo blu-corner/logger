@@ -28,9 +28,7 @@ set(JNI_SOURCES
   ${CMAKE_CURRENT_BINARY_DIR}/LogSeverity.java
   ${CMAKE_CURRENT_BINARY_DIR}/SWIGTYPE_p_bool.java
   ${CMAKE_CURRENT_BINARY_DIR}/SWIGTYPE_p_std__string.java
-  ${CMAKE_CURRENT_BINARY_DIR}/SWIGTYPE_p_tm.java
   ${CMAKE_CURRENT_BINARY_DIR}/SWIGTYPE_p_setT_neueda__logHandler_p_t.java
-  ${CMAKE_CURRENT_BINARY_DIR}/SWIGTYPE_p_timeval.java
   ${CMAKE_CURRENT_BINARY_DIR}/SWIGTYPE_p_void.java)
 
 add_jar(LoggerJNI
@@ -75,3 +73,4 @@ else()
   install(TARGETS Logger
     DESTINATION lib/java)
 endif()
+

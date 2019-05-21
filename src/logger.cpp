@@ -16,8 +16,7 @@ struct logWorkItem
     logService*        mService;
     logSeverity::level mSeverity;
     char               mName[64];
-    struct tm          mTime;
-    struct timeval     mTv;
+    uint64_t           mTime;
     char               mMessage[defaultLogMessageChunkSize];
     size_t             mMessageLen;
 };
@@ -267,8 +266,7 @@ logService::clearHandlers ()
 void
 logService::handle (const std::string& logger,
                     logSeverity::level severity,
-                    const struct tm* time,
-                    const timeval* tv,
+                    uint64_t time,
                     const char* message,
                     size_t messageLen)
 {    
@@ -276,8 +274,7 @@ logService::handle (const std::string& logger,
     
     item->mService = this;
     item->mSeverity = severity;
-    memcpy (&item->mTime, time, sizeof (struct ::tm));
-    memcpy (&item->mTv, tv, sizeof (::timeval));
+    item->mTime = time;
 
     size_t nameCopySize = (logger.size () > sizeof (item->mName)) ?
         sizeof (item->mName) :
@@ -323,8 +320,7 @@ logService::asyncHandle (sbfQueueItem item, void* closure)
 
         handle->handle (workItem->mSeverity,
                         workItem->mName,
-                        &workItem->mTime,
-                        &workItem->mTv,
+                        workItem->mTime,
                         workItem->mMessage,
                         workItem->mMessageLen);
     }
@@ -474,12 +470,10 @@ logger::vlog (logSeverity::level level,
     if (!isLevelEnabled (level))
         return;
   
-    struct tm time;
     timeval tv;
-
     gettimeofday (&tv, NULL);
-    time_t t = tv.tv_sec;
-    gmtime_r (&t, &time);
+
+    uint64_t timeInMicros = 1000000 * tv.tv_sec + tv.tv_usec;
 
     va_list cp;
     va_copy (cp, ap);
@@ -493,8 +487,7 @@ logger::vlog (logSeverity::level level,
     {
         mService->handle (getName (),
                           level,
-                          &time,
-                          &tv,
+                          timeInMicros,
                           s,
                           length);
     }
@@ -506,8 +499,7 @@ logger::vlog (logSeverity::level level,
                                          defaultLogMessageChunkSize);
             mService->handle (getName (),
                               level,
-                              &time,
-                              &tv,
+                              timeInMicros,
                               s+offset,
                               chunkSize);
             offset += chunkSize;

@@ -92,7 +92,7 @@ class logService
 public:
     ~logService ();
 
-	static logService& get();
+    static logService& get();
 
     static logger* getLogger (const std::string& name);
 
@@ -117,8 +117,7 @@ public:
 
     void handle (const std::string& logger,
                  logSeverity::level severity,
-                 const struct tm* time,
-                 const timeval* tv,
+                 uint64_t time,
                  const char* message,
                  size_t messageLen);
 

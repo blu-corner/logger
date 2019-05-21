@@ -21,8 +21,7 @@ struct logEntry
 {
     logSeverity::level      severity;
     char                    mName[64];
-    struct tm               mTime;
-    struct timeval          mTv;
+    uint64_t                mTime;
     char                    mMessage[defaultLogMessageChunkSize];
 };
 

@@ -40,8 +40,7 @@ public:
 
     virtual void handle (logSeverity::level severity,
                          const char* name,
-                         const struct tm* tm_time,
-                         const struct timeval *tv,
+                         uint64_t time,
                          const char* message,
                          size_t message_len) { }
 
@@ -50,8 +49,7 @@ public:
     static string toString (const string& format,
                             logSeverity::level severity,
                             const char* name,
-                            const struct tm* tm_time,
-                            const struct timeval *tv,
+                            uint64_t time,
                             const char* message,
                             size_t message_len);
 

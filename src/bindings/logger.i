@@ -28,31 +28,24 @@
 %rename(LogSeverity) neueda::logSeverity;
 %rename(LogHandlerFactory) neueda::logHandlerFactory;
 
-%ignore neueda::logService::addHandler (logHandler* handler, std::string& err, bool owned);
-%ignore neueda::logService::removeHandler (logHandler* handler);
-
-/* %feature("director") neueda::logHandler; */
+%feature("director") neueda::logHandler;
 
 %import(module="properties") "properties.h"
 
 %extend neueda::logService {
-    /* 
-     * TODO add support for custom logHandlers in language bindings
-     *
-     void addHandler (logHandler* const handler)
-     {
-        std::string errorMessage;
-        bool ok = self->addHandler (handler, errorMessage, false);
 
-        if (!ok)
-        {
-            std::ostringstream oss;
-            oss << "failed to add handler: "
-                << errorMessage;
-            throw std::runtime_error (oss.str ());
-        }
-     }
-     */
+    void addHandler (logHandler* const handler)
+    {
+        std::string errorMessage;
+	bool ok = self->addHandler (handler, errorMessage, false);
+      
+	if (!ok) {
+	  std::ostringstream oss;
+	  oss << "failed to add handler: "
+	      << errorMessage;
+	  throw std::runtime_error (oss.str ());
+	}
+    }
 
     void configure (neueda::properties& props)
     {

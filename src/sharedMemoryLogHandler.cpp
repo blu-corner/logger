@@ -57,8 +57,7 @@ sharedMemoryLogHandler::teardown ()
 void
 sharedMemoryLogHandler::handle (logSeverity::level severity,
                                 const char* name,
-                                const struct tm* tm_time,
-                                const timeval *tv,
+                                uint64_t time,
                                 const char* message,
                                 size_t message_len)
 {
@@ -68,10 +67,9 @@ sharedMemoryLogHandler::handle (logSeverity::level severity,
     {
         struct logEntry entry;
         memset (&entry, 0, sizeof entry);
-
+	
         entry.severity = severity;
-        memcpy (&entry.mTime, tm_time, sizeof (struct ::tm));
-        memcpy (&entry.mTv, tv, sizeof (::timeval));
+	entry.mTime = time;
 
         size_t nameCopySize = (strlen(name) > sizeof (entry.mName))
             ? sizeof (entry.mName)

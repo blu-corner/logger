@@ -35,11 +35,12 @@ consumeSharedMemory (void* closure)
         logEntry entry;
         if (sharedMemory->blockingDequeue (&entry))
         {
-            string message (entry.mMessage);
+            // FIXME overflow here need to check for null terminator
+	    // could be full defaultLogMessageChunkSize;
+	    string message (entry.mMessage);
             logService.handle (string (entry.mName),
                                entry.severity,
-                               &entry.mTime,
-                               &entry.mTv,
+                               entry.mTime,
                                message.c_str (),
                                message.size ());
         }

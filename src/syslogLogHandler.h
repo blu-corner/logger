@@ -20,8 +20,7 @@ public:
 
     void handle (logSeverity::level severity,
                  const char* name,
-                 const struct tm* tm_time,
-                 const timeval *tv,
+		 uint64_t time,
                  const char* message,
                  size_t message_len);
 

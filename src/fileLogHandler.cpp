@@ -120,16 +120,14 @@ fileLogHandler::roll ()
 void
 fileLogHandler::handle (logSeverity::level severity,
                         const char* name,
-                        const struct tm* tm_time,
-                        const timeval *tv,
+			uint64_t time,
                         const char* message,
                         size_t message_len)
 {
     string outStr = toString (mFormat,
                               severity,
                               name,
-                              tm_time,
-                              tv,
+                              time,
                               message,
                               message_len);
 

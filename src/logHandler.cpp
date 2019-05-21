@@ -19,6 +19,9 @@
 #include <cstring>
 #include <sstream>
 
+// remove this
+#include <inttypes.h>
+
 #define DEFAULT_CONFIG_NAMESPACE "logger"
 #define DEFAULT_CONSOLE_OUTPUT   "stdout"
 #define DEFAULT_LOG_LEVEL        "info"
@@ -42,8 +45,7 @@ string
 logHandler::toString (const string& format,
                       logSeverity::level severity,
                       const char* name,
-                      const struct tm* tm_time,
-                      const timeval *tv,
+		      uint64_t time,
                       const char* message,
                       size_t message_len)
 {
@@ -58,16 +60,26 @@ logHandler::toString (const string& format,
         {
             char dateTimeBuffer[64];
             memset (dateTimeBuffer, 0, sizeof dateTimeBuffer);
-            size_t nBytes = snprintf (dateTimeBuffer,
-                                      sizeof dateTimeBuffer,
-                                      "%04u-%02u-%02u %02u:%02u:%02u.%06u",
-                                      tm_time->tm_year + 1900,
-                                      tm_time->tm_mon + 1,
-                                      tm_time->tm_mday,
-                                      tm_time->tm_hour,
-                                      tm_time->tm_min,
-                                      tm_time->tm_sec,
-                                      (unsigned int)tv->tv_usec);
+
+	    // convert back to time objects for date time and calender
+	    struct timeval tv;
+	    tv.tv_sec = time / 1000000;
+	    tv.tv_usec = time % 1000000;
+
+	    time_t t = tv.tv_sec;
+	    struct tm tm_time;
+	    gmtime_r (&t, &tm_time);
+
+	    size_t nBytes = snprintf (dateTimeBuffer,
+				      sizeof dateTimeBuffer,
+				      "%04u-%02u-%02u %02u:%02u:%02u.%06u",
+				      tm_time.tm_year + 1900,
+				      tm_time.tm_mon + 1,
+				      tm_time.tm_mday,
+				      tm_time.tm_hour,
+				      tm_time.tm_min,
+				      tm_time.tm_sec,
+				      (unsigned int)tv.tv_usec);
             oss << string (dateTimeBuffer, nBytes);
         }
         else if (yytoken == SEVERITY)

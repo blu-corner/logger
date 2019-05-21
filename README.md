@@ -36,7 +36,7 @@ handlers is currently planned for bindings.
 To compile the installation:
 
 ```bash
-$ git submodule update --init --recursive
+$ git submodule update --init
 $ mkdir build
 $ cd build
 $ cmake -DTESTS=ON ../

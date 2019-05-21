@@ -19,10 +19,9 @@ public:
 
     MOCK_METHOD0 (teardown, void ());
 
-    MOCK_METHOD6 (handle, void (logSeverity::level severity,
+    MOCK_METHOD5 (handle, void (logSeverity::level severity,
                                 const char* name,
-                                const struct ::tm* tm_time,
-                                const struct timeval *tv,
+				uint64_t time,
                                 const char* message,
                                 size_t message_len));
 };
@@ -61,7 +60,6 @@ TEST_F(LoggerHandlerTestHarness, TEST_EXCEED_BUFFER_SIZE)
     ASSERT_TRUE (ok);
 
     EXPECT_CALL (*handler, handle (::testing::_,
-                                   ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
                                    ::testing::_,
