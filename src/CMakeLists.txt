@@ -18,7 +18,7 @@ set(LOGGER_HEADERS
   )
 
 set(LOGGER_LIBRARIES
-  event
+  ${EVENT_LIB}
   properties
   sbfcore
   sbfcommon
