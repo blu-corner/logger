@@ -6,7 +6,7 @@ set(LOGGER_SOURCES
   logHandler.cpp
   consoleLogHandler.cpp
   fileLogHandler.cpp
-  FormatScanner.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/FormatScanner.cpp
 )
 set(LOGGER_HEADERS
   logSeverity.h
@@ -16,6 +16,8 @@ set(LOGGER_HEADERS
   fileLogHandler.h
   ITransportDelegate.h
   )
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(LOGGER_LIBRARIES
   ${EVENT_LIB}
@@ -47,15 +49,16 @@ install(FILES ${LOGGER_HEADERS}
   DESTINATION include/logger
   )
 
-ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_SOURCE_DIR}/src/FormatScanner.cpp ${CMAKE_SOURCE_DIR}/src/FormatScanner.h
+ADD_CUSTOM_COMMAND(OUTPUT FormatScanner.cpp FormatScanner.h
   SOURCE ${PROJECT_SOURCE_DIR}/src/FormatScanner.l
   DEPENDS ${PROJECT_SOURCE_DIR}/src/FormatScanner.l
   COMMAND ${FLEX_EXECUTABLE}
-  ARGS --c++ --outfile=${CMAKE_SOURCE_DIR}/src/FormatScanner.cpp --header-file=${CMAKE_SOURCE_DIR}/src/FormatScanner.h ${CMAKE_SOURCE_DIR}/src/FormatScanner.l
+  ARGS --c++ --outfile=${CMAKE_CURRENT_BINARY_DIR}/FormatScanner.cpp --header-file=${CMAKE_CURRENT_BINARY_DIR}/FormatScanner.h ${CMAKE_SOURCE_DIR}/src/FormatScanner.l
   COMMENT "Generating FormatScanner.cpp"
   )
+
 add_custom_target(GenerateLexer ALL
-  DEPENDS ${CMAKE_SOURCE_DIR}/src/FormatScanner.cpp ${CMAKE_SOURCE_DIR}/src/FormatScanner.h
+    DEPENDS FormatScanner.cpp FormatScanner.h
   )
 
 add_library(logger SHARED ${LOGGER_SOURCES})
