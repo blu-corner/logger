@@ -32,7 +32,7 @@ protected:
     virtual void SetUp()
     {
         mLogger = logService::getLogger ("TEST_LOG_HANDLER");
-        mLogger->setLevel (logSeverity::DEBUG);
+        mLogger->setLevel (logSeverity::TRACE);
     }
 
     virtual void TearDown()
@@ -72,6 +72,35 @@ TEST_F(logHandlerTestHarness, TEST_SETUP_OK)
     bool ok = logService.addHandler (handler, errorMessage, true);
 
     ASSERT_TRUE (ok);
+
+    EXPECT_CALL (*handler, teardown ()).Times (1);
+    logService.removeHandler (handler);
+}
+
+TEST_F(logHandlerTestHarness, TEST_HANDLER_LOGS_TRACE_LEVEL_SET_TO_TRACE)
+{
+    logService& logService = logService::get ();
+    testLogHandler* handler = new testLogHandler ();
+    handler->setLevel (logSeverity::TRACE);
+
+    ON_CALL (*handler, setup ())
+        .WillByDefault (::testing::Return (true));
+    EXPECT_CALL (*handler, setup ()).Times (1);
+
+    string errorMessage;
+    bool ok = logService.addHandler (handler, errorMessage, true);
+    ASSERT_TRUE (ok);
+
+    EXPECT_CALL (*handler, handle (::testing::_,
+                                   ::testing::_,
+                                   ::testing::_,
+                                   ::testing::_,
+                                   ::testing::_))
+        .Times (3);
+
+    mLogger->trace ("HELLO WORLD 1");
+    mLogger->trace ("HELLO WORLD 2");
+    mLogger->trace ("HELLO WORLD 3");
 
     EXPECT_CALL (*handler, teardown ()).Times (1);
     logService.removeHandler (handler);

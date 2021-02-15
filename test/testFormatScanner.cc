@@ -59,6 +59,21 @@ TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_TIME_TOKEN)
     ASSERT_STREQ(log.c_str(), timeString.c_str());
 }
 
+TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_SEVERITY_TOKEN_TRACE)
+{
+    string format = "{severity}";
+    string message = "message";
+
+    string log = logHandler::toString (format,
+                                       logSeverity::TRACE,
+                                       "TEST",
+                                       mTime,
+                                       message.c_str(),
+                                       message.size ());
+
+    ASSERT_STREQ(log.c_str(), "TRACE");
+}
+
 TEST_F(formatScannerTestHarness, TEST_SCANNER_HANDLES_SEVERITY_TOKEN_DEBUG)
 {
     string format = "{severity}";

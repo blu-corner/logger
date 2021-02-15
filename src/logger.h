@@ -38,6 +38,7 @@ public:
     void warn (const char* fmt, ...) PRINTF_LIKE(2,3);
     void info (const char* fmt, ...) PRINTF_LIKE(2,3);
     void debug (const char* fmt, ...) PRINTF_LIKE(2,3);
+    void trace (const char* fmt, ...) PRINTF_LIKE(2,3);
     void fatal (const char* fmt, ...) PRINTF_LIKE(2,3);
     void log (logSeverity::level, const char* fmt, ...) PRINTF_LIKE(3,4);
 
@@ -61,6 +62,7 @@ public:
     logger& err ();
     logger& warn ();
     logger& info ();
+    logger& trace ();
     logger& debug ();
 
     const std::string& getName () const { return mName; }

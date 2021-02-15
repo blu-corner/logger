@@ -37,6 +37,7 @@ syslogLogHandler::severityToSyslogPriority (logSeverity::level level)
     switch (level)
     {
     case logSeverity::DEBUG:
+    case logSeverity::TRACE:
         return LOG_DEBUG;
     case logSeverity::INFO:
         return LOG_INFO;

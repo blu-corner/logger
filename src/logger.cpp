@@ -440,6 +440,16 @@ logger::debug (const char* fmt, ...)
 }
 
 void
+logger::trace (const char* fmt, ...)
+{
+    va_list ap;
+
+    va_start (ap, fmt);
+    vlog (logSeverity::TRACE, fmt, ap);
+    va_end (ap);
+}
+
+void
 logger::fatal (const char* fmt, ...)
 {
     va_list ap;
@@ -537,6 +547,12 @@ logger&
 logger::info ()
 {
     return log (logSeverity::INFO);
+}
+
+logger&
+logger::trace ()
+{
+    return log (logSeverity::TRACE);
 }
 
 logger&
