@@ -14,7 +14,7 @@ namespace neueda
 class logSeverity
 {
 public:
-    enum level { DEBUG = 0, INFO, WARN, ERROR, FATAL };
+    enum level { TRACE = 0, DEBUG, INFO, WARN, ERROR, FATAL };
 };
 
 }

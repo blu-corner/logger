@@ -31,7 +31,7 @@ protected:
     virtual void SetUp ()
     {
         mLogger = logService::getLogger ("TEST_LOG_HANDLER_STREAM");
-	    mLogger->setLevel (logSeverity::DEBUG);
+        mLogger->setLevel (logSeverity::TRACE);
     }
 
     virtual void TearDown ()
@@ -41,6 +41,36 @@ protected:
     logger* mLogger;
 };
 
+
+TEST_F(LogHandlerStreamApiTestHarness,
+       TEST_HANDLER_LOGS_TRACE_LEVEL_SET_TO_TRACE)
+{
+    logService& service = logService::get ();
+    testLogHandler* handler = new testLogHandler ();
+    handler->setLevel (logSeverity::TRACE);
+
+    ON_CALL (*handler, setup ())
+        .WillByDefault (::testing::Return (true));
+    EXPECT_CALL (*handler, setup ()).Times (1);
+
+    string errorMessage;
+    bool ok = service.addHandler (handler, errorMessage, true);
+    ASSERT_TRUE (ok);
+
+    EXPECT_CALL (*handler, handle (::testing::_,
+                                   ::testing::_,
+                                   ::testing::_,
+                                   ::testing::_,
+                                   ::testing::_))
+        .Times (3);
+
+    mLogger->trace () << "HELLO WORLD 1" << logger::endl;
+    mLogger->trace () << "HELLO WORLD 2" << logger::endl;
+    mLogger->trace () << "HELLO WORLD 3" << logger::endl;
+
+    EXPECT_CALL (*handler, teardown ()).Times (1);
+    service.removeHandler (handler);
+}
 
 TEST_F(LogHandlerStreamApiTestHarness,
        TEST_HANDLER_LOGS_DEBUG_LEVEL_SET_TO_DEBUG)

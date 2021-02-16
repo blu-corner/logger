@@ -66,6 +66,9 @@ consoleLogHandler::colorize (logSeverity::level severity,
     case logSeverity::DEBUG:
         return message;
 
+    case logSeverity::TRACE:
+        return message;
+
     case logSeverity::FATAL:
         return "\033[1;" CONSOLE_HANDLER_RED "m" + message + "\033[0m";
     }

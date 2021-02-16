@@ -111,6 +111,8 @@ logHandler::severityToString (const logSeverity::level severity)
         return "ERROR";
     case logSeverity::DEBUG:
         return "DEBUG";
+    case logSeverity::TRACE:
+        return "TRACE";
     case logSeverity::FATAL:
         return "FATAL";
     default:
@@ -389,6 +391,11 @@ logHandlerFactory::propertyValueToSeverity (const string& value,
     else if (value == "fatal")
     {
         severityValue = logSeverity::FATAL;
+        return true;
+    }
+    else if (value == "trace")
+    {
+        severityValue = logSeverity::TRACE;
         return true;
     }
 
